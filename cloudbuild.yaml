@@ -1,0 +1,22 @@
+steps:
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'us-central1-docker.pkg.dev/${PROJECT_ID}/image-repo/myimage', 
+           '.']
+
+  - name: 'k8s.gcr.io/busybox'
+    args: ['/bin/sh', '-c',
+           'touch /tmp/healthy; sleep 10']
+
+  # Docker Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 
+           'us-central1-docker.pkg.dev/${PROJECT_ID}/image-repo/myimage']
+logsBucket: "gs://packt-cloudbuild-dev-bucket"
+options:
+  requestedVerifyOption: VERIFIED
+  #logging: CLOUD_LOGGING_ONLY
+  logging: GCS_ONLY
+images:
+- "us-central1-docker.pkg.dev/${PROJECT_ID}/image-repo/myimage"
